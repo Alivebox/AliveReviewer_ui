@@ -1,0 +1,14 @@
+RewriteEngine On
+
+RewriteRule ^patches/* /proxy/patches.php [NC,L]
+RewriteRule ^comments/* /proxy/comments.php [NC,L]
+RewriteRule ^reviewers/* /proxy/reviewers.php [NC,L]
+RewriteRule ^login/* /proxy/login.php [NC,L]
+RewriteRule ^user/* /proxy/user.php [NC,L]
+
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.html [NC,L]
+

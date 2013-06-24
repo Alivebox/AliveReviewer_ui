@@ -1,0 +1,17 @@
+<li id="{{comment.nodeId}}" class="comment-item {{showHideComments}}">
+    <span ng-hide="comment.editMode" class="comment-text">{{comment.text}}</span>
+    <a href="#{{comment.id}}"></a>
+    <textarea ng-show="comment.editMode" class="comment-text-editable" ng-model="comment.text" autofocus></textarea>
+    
+    <div class="comment-info">
+        Author: {{comment.author}}
+        
+        <div class="mini-tools">
+            <a ng-show="comment.editMode" data-ng-click="save(comment); comment.editMode=false;" class="save-button"></a>
+            <a ng-show="comment.editMode" data-ng-click="destroy(comment)" class="delete-button"></a>            
+            <a ng-show="comment.editMode" style="vertical-align: top" data-ng-click="cancelComment(comment);">Cancel</a>
+            
+            <a ng-hide="comment.editMode" ng-click="editComment(comment);" class="edit-button"></a>
+        </div>
+    </div>
+</li>

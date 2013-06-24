@@ -1,0 +1,37 @@
+<!doctype html>
+<html data-ng-app="PatchViewer">
+<head>
+  <link rel="stylesheet" href="css/PatchViewer.css"/>
+  
+  
+  <script src="js/angular.min.js"></script>
+  <script src="js/angular-resource.min.js"></script>
+  <script src="js/angular-cookies.min.js"></script>
+  
+  <script src="app/app.js"></script>
+  
+  <script src="app/controller/PatchCtrl.js"></script>
+  <script src="app/controller/UploadCtrl.js"></script>  
+  <script src="app/controller/CommentsCtrl.js"></script>
+  <script src="app/controller/ReviewCtrl.js"></script>
+  <script src="app/controller/ReviewersCtrl.js"></script>
+  <script src="app/controller/LoginCtrl.js"></script>  
+  <script src="app/controller/UserCtrl.js"></script>  
+  
+  <script src="app/model/patchService.js"></script>
+  <script src="app/model/commentsService.js"></script>
+  <script src="app/model/reviewersService.js"></script>
+  <script src="app/model/userService.js"></script>
+  <script src="app/model/loginService.js"></script>
+  
+  <script src="app/directives/Comment.js"></script>  
+  <script src="app/directives/DiffLine.js"></script>  
+  <script src="app/directives/Reviewer.js"></script>    
+</head>
+
+<body >
+ 
+  <div data-ng-view></div>
+    
+</body>
+</html>

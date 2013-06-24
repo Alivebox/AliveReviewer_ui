@@ -1,0 +1,74 @@
+<div class="clearfix outer-wrapper" >
+    <div class='topbar' data-ng-controller="UploadCtrl">
+
+        <div class="topbar-upload-form-wrapper">
+          <form class="css-form"  method='post' enctype="multipart/form-data" name='fileinfo'>
+              <input type="hidden" value="{{data.user.id}}" name="userId"/>
+              Patch File <input name='thefile' required type="file" />
+              <input type='button' value='Upload' onclick='sendForm()'/>
+              <span id="output"></span>
+          </form>
+        </div>
+
+        <div class="reviewers-form-wrapper" data-ng-controller="ReviewersCtrl">
+            Email <input type="text" name="reviewerEmail" data-ng-model="reviewer.email"/>
+            <a data-ng-click="addReviewer()" class="add-button"></a>
+
+            <div class="reviewers-list">
+              <reviewer data-ng-repeat="reviewer in data.reviewers"></reviewer>
+            </div>             
+        </div>
+
+        <div class="patch-actions" data-ng-controller="ReviewCtrl">
+            <div data-ng-show="data.user.isOwner">                  
+                  <input type='button' value='Start' data-ng-show="!data.review.started" data-ng-click='startReview()'/>
+                  <input type='button' value='Finish' data-ng-show="data.review.started" data-ng-click='finishReview()'/>
+            </div>
+
+            <div data-ng-show="!data.isOwner">                  
+                  <input type='button' value='Approve' data-ng-click='approveReview()'/>
+                  <input type='button' value='Reject'  data-ng-click='rejectReview()'/>
+            </div>              
+        </div>
+
+    </div>
+
+    <div class="sidebar-wrapper">
+          <div class='sidebar'>
+              <ul>
+                <li data-ng-repeat="file in data.patch.files">
+                  <a data-ng-click="showFileDetails(file)">{{file.fileName}}</a>
+                </li>
+              </ul>
+          </div>
+    </div>
+
+    <div class="main-wrapper">
+          <div class='main'>
+            <div data-ng-controller="CommentsCtrl">
+                <div class="toggle-comments">
+                      <label for="tComment">Toggle Comments</label>
+                      <input id="tComment" type="checkbox" ng-click="toggleComments()"/>                      
+                </div>
+
+              <table class="changeDetails" data-ng-repeat="hunk in data.currentFile.hunks">
+
+                <tr data-ng-repeat="line in hunk.hunkLines">
+                    <td class='lineNumber'>{{line.fromLine}}</td>
+                    <td class='lineNumber'>{{line.toLine}}</td>
+                    <td class="{{line.hunkType}} lineText"><pre>{{line.text}}</pre></td>
+
+                    <td class="comment-controls">
+                        <a data-ng-click="newComment(line.id);" class="add-button"></a>
+                        <ul>
+                            <comment ng-repeat="comment in data.comments[line.id]"></comment>
+                        </ul>
+                    </td>             
+                </tr>
+
+              </table>              
+            </div>   
+         </div>
+   </div>
+
+</div>
