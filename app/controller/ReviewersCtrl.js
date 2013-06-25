@@ -20,6 +20,7 @@ function ReviewersCtrl($scope, CurrentData, Reviewer) {
         reviewer.id = null;
         reviewer.status = 'pending'
         reviewer.patch = $scope.data.patch.id;
+        reviewer.userId = $scope.data.user.id;
         
         Reviewer.save($scope.reviewer, function(reviewer) {
             $scope.reviewer = new Reviewer();            
@@ -31,6 +32,7 @@ function ReviewersCtrl($scope, CurrentData, Reviewer) {
         
         var revId = reviewer.id;
         
+        reviewer.userId = $scope.data.user.id;
         reviewer.destroy(function(response) {
             
             if(response.result) {

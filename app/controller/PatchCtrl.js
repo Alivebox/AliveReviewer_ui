@@ -3,7 +3,6 @@ function PatchCtrl($scope, $location, CurrentData, Patch, Comment, Reviewer, Log
  
   $scope.data = CurrentData;
 
-console.log(isSessionOpened($scope, Login));
   if(!isSessionOpened($scope, Login)) {
       $location.path('/login');
   }
@@ -13,13 +12,20 @@ console.log(isSessionOpened($scope, Login));
   
   
   if(patchId) {
-    $scope.data.patch = Patch.get({patchId: patchId, userId: userId}, function(patch) {
+    $scope.data.patch = Patch.get({patchId: patchId, userId: userId}, function(response) {
+        if(response.result == false) {
+            sessionExpired($scope, Login);
+            $location.path('/login');
+            return;
+        }
+        
+        var patch = response;
         $scope.getComments(patch.id, $scope.data.user.id);
         $scope.getReviewers(patch.id, $scope.data.user.id);
     });
   }
   
-  $scope.getReviewers = function(patchId, userId) {
+  $scope.getReviewers = function(patchId, userId) {      
       Reviewer.query({patch: patchId, userId: userId}, function(reviewers) {
           $scope.data.reviewers = reviewers;
       });

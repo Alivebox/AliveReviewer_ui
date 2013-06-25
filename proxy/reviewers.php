@@ -7,15 +7,16 @@ $url = $baseUrl . '/reviewers';
 switch($_SERVER['REQUEST_METHOD']) {
     
     case 'GET':
-        $parts = explode('/', $_SERVER['REQUEST_URI']);
+        /*$parts = explode('/', $_SERVER['REQUEST_URI']);
         if( count($parts) < 3 ) {
             throw new Exception('invalid patch');            
         }
         
         $patchId = $parts[2];
         
-        $url .= "/$patchId";
+        $url .= "/$patchId";*/
         
+        $url = $baseUrl . $_SERVER['REQUEST_URI'];
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);               
@@ -41,14 +42,15 @@ switch($_SERVER['REQUEST_METHOD']) {
         break;
     
     case 'DELETE':
-        $parts = explode('/', $_SERVER['REQUEST_URI']);
+        /*$parts = explode('/', $_SERVER['REQUEST_URI']);
         if( count($parts) < 3 ) {
             throw new Exception('invalid patch');            
         }
         
         $reviewerId = $parts[2];        
         $url.= "/$reviewerId";
-        
+        */
+        $url = $baseUrl . $_SERVER['REQUEST_URI'];
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");

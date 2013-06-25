@@ -40,3 +40,7 @@ function isSessionOpened(scope, Login) {
 
     return scope.data.user.id != null;
 }
+
+function sessionExpired(scope, Login) {
+    Login.sessionExpired();
+}

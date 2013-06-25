@@ -23,5 +23,8 @@ angular.module('loginService', ['ngResource']).
             return userObj;
       }
       
+      Login.sessionExpired= function() {
+          $cookieStore.remove('user');
+      }
       return Login;
     });
