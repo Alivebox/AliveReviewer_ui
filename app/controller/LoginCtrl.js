@@ -22,7 +22,13 @@ function LoginCtrl($scope, $location, $routeParams, $cookieStore, CurrentData,  
             $cookieStore.put('user', angular.toJson(response.data));
             $location.path('/dashboard/' + $routeParams.patchId);        
         });
-    }       
+    }
+    
+    $scope.logout = function() {
+        Login.sessionExpired();
+        $scope.data.user = {};
+        $location.path('/login');
+    }
 }
 
 function isSessionOpened(scope, Login) {

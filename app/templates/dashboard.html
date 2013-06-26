@@ -1,10 +1,10 @@
 <div class="clearfix outer-wrapper" >    
     <div class='topbar' data-ng-controller="UploadCtrl">
-        <div class="loggedInMenu">
+        <div class="loggedInMenu" ng-controller="LoginCtrl">
             <ul>
                 <li><img src='/dfd.png'/> Cranespud</li>
                 <li><a href="#">My Account</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a ng-click="logout()">Logout</a></li>
             </ul>                               
         </div>
 

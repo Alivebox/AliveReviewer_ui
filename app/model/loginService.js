@@ -24,8 +24,7 @@ angular.module('loginService', ['ngResource']).
       }
       
       Login.sessionExpired = function() {
-          $cookieStore.remove('user');
-          $scope.data.user = {};
+          $cookieStore.remove('user');          
       }
       
       return Login;
