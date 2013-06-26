@@ -19,13 +19,13 @@
             </div>             
         </div>
 
-        <div class="patch-actions" data-ng-controller="ReviewCtrl">
-            <div data-ng-show="data.user.isOwner">                  
+        <div class="patch-actions" data-ng-controller="ReviewCtrl">            
+            <div data-ng-show="data.user.isOwner">
                   <input type='button' value='Start' data-ng-show="!data.review.started" data-ng-click='startReview()'/>
                   <input type='button' value='Finish' data-ng-show="data.review.started" data-ng-click='finishReview()'/>
             </div>
 
-            <div data-ng-show="!data.isOwner">                  
+            <div data-ng-show="!data.user.isOwner">                  
                   <input type='button' value='Approve' data-ng-click='approveReview()'/>
                   <input type='button' value='Reject'  data-ng-click='rejectReview()'/>
             </div>              

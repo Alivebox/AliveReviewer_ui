@@ -28,7 +28,7 @@ switch($_SERVER['REQUEST_METHOD']) {
         }
         
         $patchId = $parts[2];
-        $userId = $parts[3];
+        $userId  = $parts[3];
         
         $url .= '/' . $patchId . '/' . $userId;
         $ch = curl_init();

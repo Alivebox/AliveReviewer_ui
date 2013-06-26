@@ -2,6 +2,7 @@ angular.module('reviewersService', ['ngResource']).
     factory('Reviewer', function($resource) {
       var Reviewer = $resource('/reviewers/:patch/:reviewerId/:userId',
           { }, {
+              query: {method: 'GET', isArray: false},
               update: {method: 'PUT'}
           }
       );

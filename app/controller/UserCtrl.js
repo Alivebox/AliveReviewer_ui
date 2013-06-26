@@ -13,7 +13,6 @@ function UserCtrl($scope, $location, CurrentData, User) {
                 return;
            }
            
-            $scope.data.session.loggedIn = true;
             $scope.data.user = data;
             $location.path('/dashboard');                      
         });

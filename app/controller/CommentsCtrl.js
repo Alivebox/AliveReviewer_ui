@@ -2,7 +2,7 @@ function CommentsCtrl($scope, $scope, CurrentData, Comment) {
         
     $scope.data = CurrentData;       
     $scope.currentComment = {}
-    $scope.showHideComments = 'hide-comments';
+    $scope.showHideComments = false;
     
     $scope.save = function(comment) {
         
@@ -13,8 +13,14 @@ function CommentsCtrl($scope, $scope, CurrentData, Comment) {
             Comment.update(comment, function(comment) {});
         } else {
             
-            Comment.save(comment, function(dComment) {
+            Comment.save(comment, function(response) {
                 
+                if(!response.result) {
+                    alert(result.message);
+                    return;
+                }
+                
+                dComment = response.data;
                 if(!$scope.data.comments[dComment.line]) {
                     $scope.data.comments[dComment.line] = [];
                 }
@@ -41,8 +47,9 @@ function CommentsCtrl($scope, $scope, CurrentData, Comment) {
     $scope.destroy = function(comment) {
         comment.userId = $scope.data.user.id;
         
-        if(comment.id != null) {
-            comment.destroy(function(response) {
+        if(comment.id != null) {            
+            var dComment = new Comment(comment);
+            dComment.destroy(function(response) {                
                 if(response.result) {                
                     _removeComment(comment);
                 } else {
@@ -53,11 +60,11 @@ function CommentsCtrl($scope, $scope, CurrentData, Comment) {
     }
       
     $scope.toggleComments = function() {
-        $scope.showHideComments = $scope.showHideComments == 'hide-comments' ? 'show-comments' : 'hide-comments';
+        $scope.showHideComments = !$scope.showHideComments;
     }  
 
     $scope.areCommentsVisible = function() {
-        return $scope.showHideComments == 'show-comments';
+        return $scope.showHideComments;
     }
 
     $scope.newComment = function(line) {
@@ -109,5 +116,9 @@ function CommentsCtrl($scope, $scope, CurrentData, Comment) {
                 break;
             }
         }
+    }
+    
+    $scope.canEdit = function(comment) {        
+        return comment.authorId == $scope.data.user.id;
     }
 }

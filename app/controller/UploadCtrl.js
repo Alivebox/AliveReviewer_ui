@@ -12,9 +12,16 @@ function UploadCtrl($scope, CurrentData) {
       
       oReq.onload = function(oEvent) {
         if (oReq.status == 200) {
-            var patch = angular.fromJson(oReq.response);
-            $scope.data.patch = patch;
-            location = '/' + patch.id;
+            var response = angular.fromJson(oReq.response);
+            
+            if(!response.result) {
+                alert(response.message);
+                return;
+            }
+            
+            
+            $scope.data.patch = response.data;
+            location = '/' + $scope.data.patch.id;
         } else {
           oOutput.innerHTML = "Error " + oReq.status + " occurred uploading your file.<br \/>";
         }

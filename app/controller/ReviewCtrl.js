@@ -7,13 +7,14 @@ function ReviewCtrl($scope, CurrentData, Patch, Reviewer ) {
   
   $scope.startReview = function() {
       var review = {
-          patchid: $scope.data.patch.id,
-          status: 'started'
+          userId: $scope.data.user.id,
+          patchId: $scope.data.patch.id,
+          status: Constants.patch.START_REVIEW
       };
       
       Patch.update(review, function(response) {
           if(response.result) {
-              $scope.data.patch.status = 'started';
+              $scope.data.patch.status = Constants.patch.START_REVIEW;
               $scope.data.review.started = true;
           }          
       });
@@ -23,14 +24,15 @@ function ReviewCtrl($scope, CurrentData, Patch, Reviewer ) {
   $scope.finishReview = function() {
       
       var review = {
-          patchid: $scope.data.patch.id,
-          status: 'closed'
+          userId: $scope.data.user.id,
+          patchId: $scope.data.patch.id,
+          status: Constants.patch.FINISH_REVIEW
       };
       
       Patch.update(review, function(response) {
           if(response.result) {
                 $scope.data.review.started = false;
-                $scope.data.patch.status = 'closed';
+                $scope.data.patch.status = Constants.patch.FINISH_REVIEW;
           }
       });
   }
@@ -38,26 +40,35 @@ function ReviewCtrl($scope, CurrentData, Patch, Reviewer ) {
   $scope.approveReview = function() {
       
       var reviewStatus = {
+          userId: $scope.data.user.id,
           reviewerid: $scope.data.user.id,
-          status: 'accepted'
+          status: Constants.reviewer.REVIEW_STATUS_APPROVED
       };
       
       Reviewer.update(reviewStatus, function(response) {
-          if(response.result) {                
+          if(!response.result) {                
+              alert(response.message);
+              return;
           }
+          
+          
       });
   }
 
   $scope.rejectReview = function() {
       
       var reviewStatus = {
+          userId: $scope.data.user.id,
           reviewerid: $scope.data.user.id,
-          status: 'rejected'
+          status: Constants.reviewer.REVIEW_STATUS_REJECTED
       };
       
       Reviewer.update(reviewStatus, function(response) {
-          if(response.result) {                
+          if(!response.result) {                
+              alert(response.message);
+              return;
           }
+          
       });
   }
 

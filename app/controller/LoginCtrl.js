@@ -18,10 +18,9 @@ function LoginCtrl($scope, $location, $cookieStore, CurrentData,  Login) {
                 return;
             }
             
-            $scope.data.session.loggedIn = true;
             $scope.data.user = response.data;
             $cookieStore.put('user', angular.toJson(response.data));
-            $location.path('/dashboard');           
+            $location.path('/dashboard');        
         });
     }       
 }

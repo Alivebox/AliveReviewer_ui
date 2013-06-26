@@ -18,22 +18,31 @@ function ReviewersCtrl($scope, CurrentData, Reviewer) {
         }       
         
         reviewer.id = null;
-        reviewer.status = 'pending'
+        reviewer.status = Constants.reviewer.REVIEW_STATUS_PENDING;
         reviewer.patch = $scope.data.patch.id;
         reviewer.userId = $scope.data.user.id;
         
-        Reviewer.save($scope.reviewer, function(reviewer) {
-            $scope.reviewer = new Reviewer();            
+        Reviewer.save($scope.reviewer, function(response) {
+            
+            if(!response.result) {
+                alert(response.message);
+                return;
+            }
+            
+            var reviewer = response.data;
+            $scope.reviewer = new Reviewer();
             $scope.data.reviewers.push(new Reviewer(reviewer));
         });
     }
 
     $scope.destroy = function(reviewer) {
         
-        var revId = reviewer.id;
         
-        reviewer.userId = $scope.data.user.id;
-        reviewer.destroy(function(response) {
+        var revId = reviewer.id;
+        var dReviewer = new Reviewer(reviewer);
+        
+        dReviewer.userId = $scope.data.user.id;
+        dReviewer.destroy(function(response) {
             
             if(response.result) {
                 for(var i = 0; i < $scope.data.reviewers.length; i++) {            
