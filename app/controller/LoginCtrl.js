@@ -2,8 +2,9 @@ function LoginCtrl($scope, $location, $routeParams, $cookieStore, CurrentData,  
     
     $scope.data = CurrentData;
     
-    if(isSessionOpened($scope, Login)) {        
-        $location.path('/dashboard/' + $routeParams.patchId);
+    if(isSessionOpened($scope, Login)) { 
+      var path = $routeParams.patchId != undefined ? '/dashboard/' + $routeParams.patchId : '/dashboard';
+      $location.path(path);        
     }
     
     $scope.login = function() {

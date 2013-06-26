@@ -3,8 +3,9 @@ function PatchCtrl($scope, $location, $routeParams, CurrentData, Patch, Comment,
  
   $scope.data = CurrentData;
   
-  if(!isSessionOpened($scope, Login)) {      
-      $location.path('/login/' + $routeParams.patchId);
+  if(isSessionOpened($scope, Login)) {
+      var path = $routeParams.patchId != undefined ? '/login/' + $routeParams.patchId : '/login';
+      $location.path(path);      
       return;
   }
   
@@ -12,12 +13,13 @@ function PatchCtrl($scope, $location, $routeParams, CurrentData, Patch, Comment,
   var userId = $scope.data.user.id;
   
   
-  if(patchId) {
+  if(patchId && patchId != undefined) {
     $scope.data.patch = Patch.get({patchId: patchId, userId: userId}, function(response) {
         
         if(response.result == false) {
             sessionExpired($scope, Login);
-            $location.path('/login');
+            var path = $routeParams.patchId != undefined ? '/login/' + $routeParams.patchId : '/login';
+            $location.path(path);
             return;
         }
         
