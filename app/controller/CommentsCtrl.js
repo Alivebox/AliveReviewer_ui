@@ -78,7 +78,7 @@ function CommentsCtrl($scope, $scope, CurrentData, Comment) {
            id: null,
            line : line,
            text: '< edit me >',
-           author : 'cranespud@alivebox.com',
+           authorId : $scope.data.user.id,
            nodeId: 'temp'
        });
 

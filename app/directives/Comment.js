@@ -4,14 +4,14 @@ myApp.directive("comment", function($timeout) {
         templateUrl: "/app/directives/templates/Comment.html",
         link: function(scope, element, attrs) {
             
-            scope.$watch('show-comments', function(newValue, oldValue) {                
+            /*scope.$watch('show-comments', function(newValue, oldValue) {                
                 
                 if(document.getElementById('temp')) {
                     $timeout(function(){
                         document.getElementById('temp').scrollIntoView();                        
                     }, 90);
                 }
-            })
+            })*/
         }
     }
 });

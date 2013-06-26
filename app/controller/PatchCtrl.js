@@ -1,15 +1,14 @@
 
-function PatchCtrl($scope, $location, CurrentData, Patch, Comment, Reviewer, Login) {
+function PatchCtrl($scope, $location, $routeParams, CurrentData, Patch, Comment, Reviewer, Login) {
  
   $scope.data = CurrentData;
   
-  if(!isSessionOpened($scope, Login)) {
-      $location.path('/login');
+  if(!isSessionOpened($scope, Login)) {      
+      $location.path('/login/' + $routeParams.patchId);
       return;
   }
   
-  
-  var patchId = location.pathname.substr(1);
+  var patchId = $routeParams.patchId;
   var userId = $scope.data.user.id;
   
   

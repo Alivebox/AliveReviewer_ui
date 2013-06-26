@@ -1,5 +1,12 @@
-<div class="clearfix outer-wrapper" >
+<div class="clearfix outer-wrapper" >    
     <div class='topbar' data-ng-controller="UploadCtrl">
+        <div class="loggedInMenu">
+            <ul>
+                <li><img src='/dfd.png'/> Cranespud</li>
+                <li><a href="#">My Account</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>                               
+        </div>
 
         <div class="topbar-upload-form-wrapper">
           <form class="css-form"  method='post' enctype="multipart/form-data" name='fileinfo'>
@@ -19,7 +26,7 @@
             </div>             
         </div>
 
-        <div class="patch-actions" data-ng-controller="ReviewCtrl">            
+        <div class="patch-actions" data-ng-controller="ReviewCtrl">
             <div data-ng-show="data.user.isOwner">
                   <input type='button' value='Start' data-ng-show="!data.review.started" data-ng-click='startReview()'/>
                   <input type='button' value='Finish' data-ng-show="data.review.started" data-ng-click='finishReview()'/>

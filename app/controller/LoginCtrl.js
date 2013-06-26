@@ -1,9 +1,9 @@
-function LoginCtrl($scope, $location, $cookieStore, CurrentData,  Login) {
+function LoginCtrl($scope, $location, $routeParams, $cookieStore, CurrentData,  Login) {
     
     $scope.data = CurrentData;
     
-    if(isSessionOpened($scope, Login)) {
-        $location.path('/dashboard');
+    if(isSessionOpened($scope, Login)) {        
+        $location.path('/dashboard/' + $routeParams.patchId);
     }
     
     $scope.login = function() {
@@ -20,7 +20,7 @@ function LoginCtrl($scope, $location, $cookieStore, CurrentData,  Login) {
             
             $scope.data.user = response.data;
             $cookieStore.put('user', angular.toJson(response.data));
-            $location.path('/dashboard');        
+            $location.path('/dashboard/' + $routeParams.patchId);        
         });
     }       
 }

@@ -9,9 +9,12 @@ var myApp = angular.module('PatchViewer', [
   config(function($routeProvider) {
     $routeProvider.
         when('/dashboard', {controller:PatchCtrl, templateUrl: '/app/templates/dashboard.html'}).
+        when('/dashboard/:patchId', {controller:PatchCtrl, templateUrl: '/app/templates/dashboard.html'}).
         when('/login', {controller:LoginCtrl, templateUrl:'/app/templates/login.html'}).
+        when('/login/:patchId', {controller:LoginCtrl, templateUrl:'/app/templates/login.html'}).
         when('/register', {controller:UserCtrl, templateUrl:'/app/templates/register.html'}).
-        otherwise({redirectTo:'/dashboard'});        
+        when('/notfound', {templateUrl:'/app/templates/404.html'}).
+        otherwise({redirectTo:'/notfound'});        
   });
 
   myApp.factory('CurrentData', function() {
