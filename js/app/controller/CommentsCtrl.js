@@ -63,10 +63,6 @@ function CommentsCtrl($scope, $scope, CurrentData, Comment) {
         $scope.showHideComments = !$scope.showHideComments;
     }  
 
-    $scope.areCommentsVisible = function() {
-        return $scope.showHideComments;
-    }
-
     $scope.newComment = function(line) {
 
        if(!$scope.data.comments[line]) {
@@ -86,16 +82,11 @@ function CommentsCtrl($scope, $scope, CurrentData, Comment) {
 
        // track current comment
        $scope.currentComment = comment;
-       $scope.editComment(comment);       
+       $scope.editComment(comment);
     }
 
     $scope.editComment = function(comment, element) {
-
-        if(!$scope.areCommentsVisible()) {
-            $scope.toggleComments();
-        }
-
-        comment.editMode = true;
+        $scope.showHideComments = true;
         $scope.currentComment = new Comment(comment);
     }
 
@@ -109,7 +100,6 @@ function CommentsCtrl($scope, $scope, CurrentData, Comment) {
                     comments.splice(i, 1);
                 } else {
                     comments[i] = $scope.currentComment; // restore the original version of the comment
-                    comments[i].editMode = false;
                 }
 
                 $scope.currentComment = null;
@@ -118,7 +108,25 @@ function CommentsCtrl($scope, $scope, CurrentData, Comment) {
         }
     }
     
-    $scope.canEdit = function(comment) {        
+    $scope.isEditable = function(comment) {
         return comment.authorId == $scope.data.user.id;
     }
+    
+    $scope.getAuthor = function(comment) {
+       
+      var currentUser = $scope.data.user;
+      var reviewers   = $scope.data.reviewers;
+      
+      if(comment.authorId == currentUser.id) {
+          return currentUser;
+      }
+      
+      for( var i = 0; i < reviewers.length; i++) {
+          if(reviewers[i].id == comment.authorId) {
+              return reviewers[i];
+          }
+      }
+      
+      return {};
+    };
 }

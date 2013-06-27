@@ -31,6 +31,8 @@ switch($_SERVER['REQUEST_METHOD']) {
         $userId  = $parts[3];
         
         $url .= '/' . $patchId . '/' . $userId;
+        
+        
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);

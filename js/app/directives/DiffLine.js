@@ -1,6 +1,6 @@
 myApp.directive('diffline', function(){
     return {
         restrict: "E",
-        templateUrl: "/app/directives/templates/DiffLine.html"
+        templateUrl: "/js/app/directives/templates/DiffLine.html"
     }
 });

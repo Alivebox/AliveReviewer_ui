@@ -1,9 +1,8 @@
-
 function PatchCtrl($scope, $location, $routeParams, CurrentData, Patch, Comment, Reviewer, Login) {
  
   $scope.data = CurrentData;
-  
-  if(isSessionOpened($scope, Login)) {
+    
+  if(!isSessionOpened($scope, Login)) {
       var path = $routeParams.patchId != undefined ? '/login/' + $routeParams.patchId : '/login';
       $location.path(path);      
       return;
@@ -11,7 +10,6 @@ function PatchCtrl($scope, $location, $routeParams, CurrentData, Patch, Comment,
   
   var patchId = $routeParams.patchId;
   var userId = $scope.data.user.id;
-  
   
   if(patchId && patchId != undefined) {
     $scope.data.patch = Patch.get({patchId: patchId, userId: userId}, function(response) {
