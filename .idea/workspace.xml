@@ -2,14 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="026e9d6f-1f45-4b34-9c35-bb09d4f0ac0c" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/AddComment_title.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/MyFiles_title.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/item.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/item_selected.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/logo.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/logout.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/profile.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/revier_list.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/reviewer_new.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/css/PatchViewer.css" afterPath="$PROJECT_DIR$/css/PatchViewer.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/app/templates/dashboard.html" afterPath="$PROJECT_DIR$/js/app/templates/dashboard.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="AliveReviewer_ui.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Dummy.txt" changelist="026e9d6f-1f45-4b34-9c35-bb09d4f0ac0c" time="1376671445359" ignored="false" />
-    <file path="/dashboard.html" changelist="026e9d6f-1f45-4b34-9c35-bb09d4f0ac0c" time="1376686432015" ignored="false" />
-    <file path="/PatchViewer.css" changelist="026e9d6f-1f45-4b34-9c35-bb09d4f0ac0c" time="1376687239855" ignored="false" />
+    <file path="/dashboard.html" changelist="026e9d6f-1f45-4b34-9c35-bb09d4f0ac0c" time="1376692897200" ignored="false" />
+    <file path="/PatchViewer.css" changelist="026e9d6f-1f45-4b34-9c35-bb09d4f0ac0c" time="1376697211822" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +42,7 @@
       <file leaf-file-name="PatchViewer.css" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/css/PatchViewer.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="246" column="7" selection-start="3651" selection-end="3657" vertical-scroll-proportion="0.7314702">
+            <state line="299" column="0" selection-start="5768" selection-end="5768" vertical-scroll-proportion="0.87606317">
               <folding />
             </state>
           </provider>
@@ -41,7 +51,16 @@
       <file leaf-file-name="dashboard.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/app/templates/dashboard.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="6" selection-start="28" selection-end="28" vertical-scroll-proportion="-1.3076923">
+            <state line="31" column="67" selection-start="1423" selection-end="1423" vertical-scroll-proportion="6.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UploadCtrl.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/js/app/controller/UploadCtrl.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="4" column="4" selection-start="99" selection-end="99" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -291,6 +310,12 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="FullScreen" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\AliveReviewer_ui\images" />
+    </key>
   </component>
   <component name="RunManager">
     <list size="0" />
@@ -306,7 +331,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="32" width="1936" height="1056" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -395,16 +420,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/js/app/controller/UploadCtrl.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="4" selection-start="99" selection-end="99" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/lib/phpstorm.jar!/resources/html5-schema/web-forms2.rnc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="631" column="23" selection-start="14303" selection-end="14303" vertical-scroll-proportion="0.33333334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/js/app/templates/dashboard.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="6" selection-start="28" selection-end="28" vertical-scroll-proportion="-1.3076923">
+        <state line="31" column="67" selection-start="1423" selection-end="1423" vertical-scroll-proportion="6.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/css/PatchViewer.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="246" column="7" selection-start="3651" selection-end="3657" vertical-scroll-proportion="0.7314702">
+        <state line="299" column="0" selection-start="5768" selection-end="5768" vertical-scroll-proportion="0.87606317">
           <folding />
         </state>
       </provider>

@@ -25,7 +25,7 @@ html body, body html {
 }
 
 .outer-wrapper {
-    width: 1800px;
+    width: 100%;
     margin: 0 auto;
     border: 1px solid lightgrey;
 }
@@ -49,8 +49,15 @@ html body, body html {
 }
 
 .topbar-upload-form-wrapper {
-    padding: 3px 0 0 10px;
-    display: inline-block;
+    background: -moz-linear-gradient(top,  #ddf3fb 0%, #bad7f0 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ddf3fb), color-stop(100%,#bad7f0)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ddf3fb 0%,#bad7f0 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ddf3fb 0%,#bad7f0 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ddf3fb 0%,#bad7f0 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ddf3fb 0%,#bad7f0 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ddf3fb', endColorstr='#bad7f0',GradientType=0 ); /* IE6-9 */
+    height: 110px;
+    width: 100%;
 }
 
 .sidebar {
@@ -129,7 +136,7 @@ html body, body html {
    width: 16px;
 }
 
-comment li {
+.comment li {
     list-style: none;
     margin: 0;
     padding: 0;    
@@ -226,6 +233,8 @@ comment li {
 
 .loggedInMenu {
     float: right;
+    margin-top: 25px;
+    margin-right: 10px;
 }
 
 .loggedInMenu ul {
@@ -250,4 +259,41 @@ comment li {
     width: 100%;
     border-bottom: solid 3px;
     border-bottom-color: #56AFE6;
+}
+
+.header-label {
+    color: #4C9AC9;
+    vertical-align: baseline;
+    float: left;
+    padding-top: 2px;
+    padding-right: 5px;
+}
+
+.path-input {
+    padding-left: 100px;
+    font-size: 200%;
+    float: left;
+    padding-top: 30px;
+    color: #003366;
+}
+
+.upload-button{
+    background: #57afe6; /* Old browsers */
+    background: -moz-linear-gradient(top,  #57afe6 0%, #51a3d6 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#57afe6), color-stop(100%,#51a3d6)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #57afe6 0%,#51a3d6 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #57afe6 0%,#51a3d6 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #57afe6 0%,#51a3d6 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #57afe6 0%,#51a3d6 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#57afe6', endColorstr='#51a3d6',GradientType=0 ); /* IE6-9 */
+    border: #FFFFFF;
+    color: white;
+    height: 90px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-bottom-color: #7F8385;
+    border-bottom: solid 1px;
+    border-radius: 5px;
+    font-size: 150%;
+    font-weight: bold;
 }

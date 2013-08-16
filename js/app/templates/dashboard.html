@@ -1,22 +1,21 @@
 <div class="header">
-
+    <img src='images/logo.png' alt="Logo"/>
+    <div class="loggedInMenu" ng-controller="LoginCtrl">
+        <label name="userLoggued" class="header-label">Username</label>
+        <a href="#"><img src='images/profile.png' alt="Profile"></a>
+        <a ng-click="logout()"><img src='images/logout.png' alt="LogOut"></a>
+    </div>
 </div>
 
 <div class="clearfix outer-wrapper" >
     <div class='topbar' data-ng-controller="UploadCtrl">
-        <div class="loggedInMenu" ng-controller="LoginCtrl">
-            <ul>
-                <li><img src='/dfd.png'/> Cranespud</li>
-                <li><a href="#">My Account</a></li>
-                <li><a ng-click="logout()">Logout</a></li>
-            </ul>                               
-        </div>
 
         <div class="topbar-upload-form-wrapper">
           <form class="css-form"  method='post' enctype="multipart/form-data" name='fileinfo'>
               <input type="hidden" value="{{data.user.id}}" name="userId"/>
-              Patch File <input name='thefile' required type="file" />
-              <input type='button' value='Upload' onclick='sendForm()'/>
+              <label class="path-input">Patch</label>
+               <input name='thefile' required type="file"/>
+              <input class="upload-button" type='button' value='Upload' onclick='sendForm()'/>
               <span id="output"></span>
           </form>
         </div>
@@ -27,7 +26,7 @@
 
             <div class="reviewers-list">
               <reviewer data-ng-repeat="reviewer in data.reviewers"></reviewer>
-            </div>             
+            </div>
         </div>
 
         <div class="patch-actions" data-ng-controller="ReviewCtrl">
@@ -36,10 +35,10 @@
                   <input type='button' value='Finish' data-ng-show="data.review.started" data-ng-click='finishReview()'/>
             </div>
 
-            <div data-ng-show="!data.user.isOwner">                  
+            <div data-ng-show="!data.user.isOwner">
                   <input type='button' value='Approve' data-ng-click='approveReview()'/>
                   <input type='button' value='Reject'  data-ng-click='rejectReview()'/>
-            </div>              
+            </div>
         </div>
 
     </div>
