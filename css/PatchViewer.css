@@ -243,3 +243,11 @@ comment li {
     background: red;
     vertical-align: top;
 }
+
+.header{
+    background-color: #003366;
+    height: 70px;
+    width: 100%;
+    border-bottom: solid 3px;
+    border-bottom-color: #56AFE6;
+}
