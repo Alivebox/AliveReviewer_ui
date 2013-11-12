@@ -1,0 +1,19 @@
+<project name="rottendbHandlebars" default="main" >
+
+    <macrodef name="grunt">
+        <sequential>
+            <echo message="Running grunt build"/>
+            <exec executable="grunt.cmd" searchPath="true" >
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <target name="build" >
+
+        <grunt />
+
+    </target>
+
+    <target name="main" depends="build" />
+
+</project>

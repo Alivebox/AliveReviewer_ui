@@ -1,0 +1,29 @@
+/************************************************************
+  Base SaSS file to define colors, variables, etc
+************************************************************/
+/************************************************************
+  Colors
+************************************************************/
+.header-form {
+  background-color: #003366;
+  border-bottom-color: #57AFE6;
+  border-bottom-style: solid;
+  border-bottom-width: 3px;
+  height: 70px;
+  width: 100%;
+}
+
+.header-logo-form {
+  background-color: transparent;
+  background-image: url("../images/logo.png");
+  background-position: 0px 0px;
+  background-repeat: no-repeat;
+  height: 67px;
+  margin: 0 auto 0 auto;
+  width: 202px;
+}
+
+.center-form {
+  margin: 0 auto 0 auto !important;
+  width: 400px !important;
+}
