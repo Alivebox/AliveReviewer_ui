@@ -1,0 +1,25 @@
+ Webapp/AdminApp/js/build/controllers.js     |  22 +++---
+ Webapp/AdminApp/js/build/models.js          |   2 +-
+ Webapp/AdminApp/js/build/routes.js          |   2 +-
+ Webapp/AdminApp/js/build/templates.js       |  36 +++++++---
+ Webapp/AdminApp/js/build/views.js           |   2 +-
+ Webapp/AdminApp/js/config/WebServices.js    |   4 +-
+ Webapp/AdminApp/js/config/app.js            |   6 +-
+ Webapp/ConsumerApp/css/main.css             | 104 ++++++++++++++--------------
+ Webapp/ConsumerApp/js/build/controllers.js  |   2 +-
+ Webapp/ConsumerApp/js/build/models.js       |   2 +-
+ Webapp/ConsumerApp/js/build/routes.js       |   2 +-
+ Webapp/ConsumerApp/js/build/templates.js    |  66 +++++++++---------
+ Webapp/ConsumerApp/js/build/views.js        |   2 +-
+ Webapp/ConsumerApp/js/config/WebServices.js |   4 +-
+ Webapp/ConsumerApp/js/config/app.js         |   6 +-
+ 15 files changed, 140 insertions(+), 122 deletions(-)
+
+diff --git a/Webapp/AdminApp/js/build/controllers.js b/Webapp/AdminApp/js/build/controllers.js
+index 06d8a2d..8fd1cb6 100644
+--- a/Webapp/AdminApp/js/build/controllers.js
++++ b/Webapp/AdminApp/js/build/controllers.js
+@@ -1,4 +1,4 @@
+-/*! handlebarstemplates Generated on 2013-10-24 */
++/*! handlebarstemplates Generated on 2013-10-25 */
+ App.ApplicationController = Ember.Controller.extend({

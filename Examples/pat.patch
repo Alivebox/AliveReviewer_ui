@@ -1,0 +1,814 @@
+ Webapp/AdminApp/js/build/controllers.js     |  22 +++---
+ Webapp/AdminApp/js/build/models.js          |   2 +-
+ Webapp/AdminApp/js/build/routes.js          |   2 +-
+ Webapp/AdminApp/js/build/templates.js       |  36 +++++++---
+ Webapp/AdminApp/js/build/views.js           |   2 +-
+ Webapp/AdminApp/js/config/WebServices.js    |   4 +-
+ Webapp/AdminApp/js/config/app.js            |   6 +-
+ Webapp/ConsumerApp/css/main.css             | 104 ++++++++++++++--------------
+ Webapp/ConsumerApp/js/build/controllers.js  |   2 +-
+ Webapp/ConsumerApp/js/build/models.js       |   2 +-
+ Webapp/ConsumerApp/js/build/routes.js       |   2 +-
+ Webapp/ConsumerApp/js/build/templates.js    |  66 +++++++++---------
+ Webapp/ConsumerApp/js/build/views.js        |   2 +-
+ Webapp/ConsumerApp/js/config/WebServices.js |   4 +-
+ Webapp/ConsumerApp/js/config/app.js         |   6 +-
+ 15 files changed, 140 insertions(+), 122 deletions(-)
+
+diff --git a/Webapp/AdminApp/js/build/controllers.js b/Webapp/AdminApp/js/build/controllers.js
+index 06d8a2d..8fd1cb6 100644
+--- a/Webapp/AdminApp/js/build/controllers.js
++++ b/Webapp/AdminApp/js/build/controllers.js
+@@ -1,4 +1,4 @@
+-/*! handlebarstemplates Generated on 2013-10-24 */
++/*! handlebarstemplates Generated on 2013-10-25 */
+ App.ApplicationController = Ember.Controller.extend({
+ 
+     wizardRef : null,
+@@ -61,7 +61,7 @@ App.CaseDetailsAnnouncementsController = Ember.ObjectController.extend({
+ 
+         App.MyAnnouncements.save(this.newAnnouncement, function(response) {
+             model.content.Announcements.addObject(response[0]);
+-            Ember.set(that, 'newAnnouncement', {CaseMember: {}, DateAnnouncement: new Date()});
++            Ember.set(that, 'newAnnouncement', {CaseMember: {}, DateAnnouncement: new Date(Date.UTC())});
+             $('#newAnnouncementSuccessPopup').modal();
+         }, function() {
+             alert('An error occured, announcement not saved');
+@@ -77,7 +77,8 @@ App.CaseDetailsAnnouncementsController = Ember.ObjectController.extend({
+     updateAnnouncement: function() {
+         var that = this;
+         App.MyAnnouncements.save(this.selectedAnnouncement, function() {
+-            var selectedAnnouncement = _.find(that.announcers, {UserId: that.selectedAnnouncement.CaseMember.UserId});
++            var selectedAnnouncer = _.find(that.announcers, {UserId: that.selectedAnnouncement.CaseMember.UserId});
++            
+             // update announcer column not possible with current data
+             alert('Announcement updated.');
+         }, function() {
+@@ -124,6 +125,7 @@ App.CaseDetailsController = Ember.ObjectController.extend({
+     types: null,
+     needs: ['CaseDetailsTransactions'],
+ 
++    date: new Date(),
+     saveCaseInfo: function() {
+         var model = this.get('model');
+         var data = {
+@@ -221,7 +223,7 @@ App.CaseDetailsController = Ember.ObjectController.extend({
+         Ember.set(model.content.Item, 'CategoryName', selectedValue.caseCategory);    
+         this.loadCategoryTypes();
+     }.observes('model.content.Item.Category'),
+-            
++
+     onTypeChange: function() {
+         var model = this.get('model');        
+         if(!model.isLoaded || !this.types.isLoaded) { return; }
+@@ -239,14 +241,16 @@ App.CaseDetailsController = Ember.ObjectController.extend({
+         $('#TypeSelect').val(model.content.Item.Type); 
+     },
+ 
+-    onCasesDropdownChange: function() {
++    /*onCasesDropdownChange: function() {
+         var model = this.get('model');
+         if(model.isLoaded) {
+-            this.transitionTo('CaseDetails.transactions', model.content.Item.Id);
+-            // I won't fight "Error: Cannot perform operations on a Metamorph that is not in the DOM." no more
+-            window.location.reload();
++            if(model.content.Item.Id) {
++                this.transitionTo('CaseDetails.transactions', model.content.Item.Id);
++                // I won't fight "Error: Cannot perform operations on a Metamorph that is not in the DOM." no more
++                window.location.reload();
++            }
+         }
+-    }.observes('model.content.Item.Id')
++    }.observes('model.content.Item.Id')*/
+ });
+ 
+ 
+diff --git a/Webapp/AdminApp/js/build/models.js b/Webapp/AdminApp/js/build/models.js
+index 4741b25..02df782 100644
+--- a/Webapp/AdminApp/js/build/models.js
++++ b/Webapp/AdminApp/js/build/models.js
+@@ -1,4 +1,4 @@
+-/*! handlebarstemplates Generated on 2013-10-24 */
++/*! handlebarstemplates Generated on 2013-10-25 */
+ App.Announcements = App.BaseModel.extend({
+     Announcements: [],
+     
+diff --git a/Webapp/AdminApp/js/build/routes.js b/Webapp/AdminApp/js/build/routes.js
+index f13092c..d9aeabb 100644
+--- a/Webapp/AdminApp/js/build/routes.js
++++ b/Webapp/AdminApp/js/build/routes.js
+@@ -1,4 +1,4 @@
+-/*! handlebarstemplates Generated on 2013-10-24 */
++/*! handlebarstemplates Generated on 2013-10-25 */
+ App.ApplicationRoute = Ember.Route.extend({
+     model: function(argParams) {
+         var tmpModelInstance = App.BaseModel.create({});
+diff --git a/Webapp/AdminApp/js/build/templates.js b/Webapp/AdminApp/js/build/templates.js
+index db51ed3..d489ae7 100644
+--- a/Webapp/AdminApp/js/build/templates.js
++++ b/Webapp/AdminApp/js/build/templates.js
+@@ -26,7 +26,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+   var buffer = '', hashTypes, hashContexts, escapeExpression=this.escapeExpression;
+ 
+ 
+-  data.buffer.push("<input type='text' class='datepicker' data-row-id='");
++  data.buffer.push("<input type='text' class='datepicker ");
++  hashTypes = {};
++  hashContexts = {};
++  data.buffer.push(escapeExpression(helpers.unbound.call(depth0, "datetimepickerClass", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
++  data.buffer.push("' data-row-id='");
+   hashTypes = {};
+   hashContexts = {};
+   data.buffer.push(escapeExpression(helpers.unbound.call(depth0, "view.rowId", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+@@ -102,7 +106,7 @@ function program7(depth0,data) {
+   data.buffer.push("\r\n            <a >ANNOUNCEMENTS</a>\r\n        ");
+   }
+ 
+-  data.buffer.push("<div id='cases-edit'>\r\n\r\n    ");
++  data.buffer.push("<div id='cases-edit'>\r\n    ");
+   hashContexts = {'valueBinding': depth0,'contentBinding': depth0,'optionValuePath': depth0,'optionLabelPath': depth0,'prompt': depth0};
+   hashTypes = {'valueBinding': "STRING",'contentBinding': "STRING",'optionValuePath': "STRING",'optionLabelPath': "STRING",'prompt': "STRING"};
+   data.buffer.push(escapeExpression(helpers.view.call(depth0, "Ember.Select", {hash:{
+@@ -196,7 +200,7 @@ function program7(depth0,data) {
+ this["Ember"]["TEMPLATES"]["CaseDetails/annoucementsDataTable"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+ this.compilerInfo = [4,'>= 1.0.0'];
+ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+-  var buffer = '', stack1, hashTypes, hashContexts, escapeExpression=this.escapeExpression, self=this;
++  var buffer = '', stack1, hashTypes, hashContexts, escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
+ 
+ function program1(depth0,data) {
+   
+@@ -211,7 +215,7 @@ function program1(depth0,data) {
+ 
+ function program3(depth0,data) {
+   
+-  var buffer = '', stack1, hashTypes, hashContexts;
++  var buffer = '', stack1, hashTypes, hashContexts, options;
+   data.buffer.push("        \r\n        <tr>\r\n            ");
+   hashTypes = {};
+   hashContexts = {};
+@@ -224,7 +228,8 @@ function program3(depth0,data) {
+   data.buffer.push("</td>\r\n            <td>");
+   hashTypes = {};
+   hashContexts = {};
+-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "row.DateAnnouncement", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
++  options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
++  data.buffer.push(escapeExpression(((stack1 = helpers['date-time-format'] || depth0['date-time-format']),stack1 ? stack1.call(depth0, "row.DateAnnouncement", options) : helperMissing.call(depth0, "date-time-format", "row.DateAnnouncement", options))));
+   data.buffer.push("</td>\r\n            <td>\r\n                ");
+   hashContexts = {'iconClass': depth0,'contentId': depth0,'action': depth0,'actionParamBinding': depth0};
+   hashTypes = {'iconClass': "STRING",'contentId': "STRING",'action': "STRING",'actionParamBinding': "ID"};
+@@ -1206,7 +1211,8 @@ function program3(depth0,data) {
+   data.buffer.push("\r\n        </td>\r\n        <td>");
+   hashTypes = {};
+   hashContexts = {};
+-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "txn.CreationDate", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
++  options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
++  data.buffer.push(escapeExpression(((stack1 = helpers['date-time-format'] || depth0['date-time-format']),stack1 ? stack1.call(depth0, "txn.CreationDate", options) : helperMissing.call(depth0, "date-time-format", "txn.CreationDate", options))));
+   data.buffer.push("</td>\r\n        <td>            \r\n            ");
+   hashContexts = {'iconClass': depth0,'contentId': depth0,'action': depth0,'actionParamBinding': depth0};
+   hashTypes = {'iconClass': "STRING",'contentId': "STRING",'action': "STRING",'actionParamBinding': "ID"};
+@@ -2101,7 +2107,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+   hashTypes = {};
+   hashContexts = {};
+   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "App.user.Contact.lastName", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+-  data.buffer.push("</strong>\r\n            </td>\r\n\r\n            <td>\r\n                <label>Client Billing Code:</label>\r\n                <strong>Field is missing</strong>\r\n            </td>\r\n\r\n            <td>\r\n                <label>Contact:</label>\r\n                <strong>");
++  data.buffer.push("</strong>\r\n            </td>\r\n\r\n            <td>\r\n                <label>Client Billing Code:</label>\r\n                <strong>");
++  hashTypes = {};
++  hashContexts = {};
++  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.content.ClientBillingCode", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
++  data.buffer.push("</strong>\r\n            </td>\r\n\r\n            <td>\r\n                <label>Contact:</label>\r\n                <strong>");
+   hashTypes = {};
+   hashContexts = {};
+   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.content.TransactionContact.firstName", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+@@ -2109,11 +2119,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+   hashTypes = {};
+   hashContexts = {};
+   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.content.TransactionContact.lastName", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+-  data.buffer.push("</strong>\r\n            </td>\r\n        </tr>\r\n\r\n        <tr>\r\n            <td></td>\r\n\r\n            <td>\r\n                <label>Filed on Behalf of:</label>\r\n                <strong>Field is missing</strong>\r\n            </td>\r\n\r\n            <td>\r\n                <label>Contact Phone:</label>\r\n                <strong>");
++  data.buffer.push("</strong>\r\n            </td>\r\n        </tr>\r\n\r\n        <tr>\r\n            <td></td>\r\n\r\n            <td>\r\n                <label>Filed on Behalf of:</label>\r\n                <strong class=\"inactive-panel\">Field is missing</strong>\r\n            </td>\r\n\r\n            <td>\r\n                <label>Contact Phone:</label>\r\n                <strong>");
+   hashTypes = {};
+   hashContexts = {};
+   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.content.TransactionContact.telephone", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+-  data.buffer.push("</strong>\r\n            </td>\r\n        </tr>        \r\n\r\n    </table>\r\n<br />\r\n</div>\r\n");
++  data.buffer.push("</strong>\r\n            </td>\r\n        </tr>\r\n\r\n    </table>\r\n<br />\r\n</div>\r\n");
+   return buffer;
+   
+ });
+@@ -2148,7 +2158,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+   hashTypes = {};
+   hashContexts = {};
+   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "App.user.Contact.lastName", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+-  data.buffer.push("</b>\r\n        </div>\r\n\r\n        <div class='span3'>\r\n            <label>Client Billing Code:</label> <b>Field is missing</b>\r\n        </div>\r\n\r\n        <div class='span3'>\r\n            <label>Contact:</label> <b>");
++  data.buffer.push("</b>\r\n        </div>\r\n\r\n        <div class='span3'>\r\n            <label>Client Billing Code:</label> <b>");
++  hashTypes = {};
++  hashContexts = {};
++  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.content.ClientBillingCode", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
++  data.buffer.push("</b>\r\n        </div>\r\n\r\n        <div class='span3'>\r\n            <label>Contact:</label> <b>");
+   hashTypes = {};
+   hashContexts = {};
+   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.content.TransactionContact.firstName", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+@@ -2156,7 +2170,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+   hashTypes = {};
+   hashContexts = {};
+   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.content.TransactionContact.lastName", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+-  data.buffer.push("</b>\r\n        </div>\r\n    </div>\r\n\r\n    <div class='row-fluid'>\r\n        <div class='span3'></div>\r\n\r\n        <div class='span3'>\r\n            <label>Filed on Behalf of:</label> <b>Field is missing</b>\r\n        </div>\r\n\r\n        <div class='span3'>\r\n            <label>Contact Phone:</label> <b>");
++  data.buffer.push("</b>\r\n        </div>\r\n    </div>\r\n\r\n    <div class='row-fluid'>\r\n        <div class='span3'></div>\r\n\r\n        <div class='span3'>\r\n            <label>Filed on Behalf of:</label> <b class=\"inactive-panel \">Field is missing</b>\r\n        </div>\r\n\r\n        <div class='span3'>\r\n            <label>Contact Phone:</label> <b>");
+   hashTypes = {};
+   hashContexts = {};
+   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "model.content.TransactionContact.telephone", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+diff --git a/Webapp/AdminApp/js/build/views.js b/Webapp/AdminApp/js/build/views.js
+index 3305f5d..289a285 100644
+--- a/Webapp/AdminApp/js/build/views.js
++++ b/Webapp/AdminApp/js/build/views.js
+@@ -1,4 +1,4 @@
+-/*! handlebarstemplates Generated on 2013-10-24 */
++/*! handlebarstemplates Generated on 2013-10-25 */
+ App.AccordionView = Ember.View.extend(JQ.Widget, {
+     title: this.title ? this.title : 'Untitled',
+     layoutName: 'accordion',
+diff --git a/Webapp/AdminApp/js/config/WebServices.js b/Webapp/AdminApp/js/config/WebServices.js
+index 249b54f..730d897 100644
+--- a/Webapp/AdminApp/js/config/WebServices.js
++++ b/Webapp/AdminApp/js/config/WebServices.js
+@@ -1,8 +1,8 @@
+ App.WebServices = {
+ 
+ //   BASE_URL: 'http://caselink.dev.awm/ws'
+-//   BASE_URL: 'http://caselink.com/ws'
+-   BASE_URL: 'http://dev-caselink.onelegal.com:8082'
++   BASE_URL: 'http://caselink.com/ws'
++//   BASE_URL: 'http://dev-caselink.onelegal.com:8082'
+ }
+ 
+ _.extend(App.WebServices,{
+diff --git a/Webapp/AdminApp/js/config/app.js b/Webapp/AdminApp/js/config/app.js
+index 62b235a..1a25606 100644
+--- a/Webapp/AdminApp/js/config/app.js
++++ b/Webapp/AdminApp/js/config/app.js
+@@ -1,7 +1,7 @@
+ //This should be remove when going to production as these cookies will be set by one legal website
+-//$.cookie("__caselinkUser", "AuthUser=True&CustomerNumber=0000100&ContactId=7622",{
+-//    path: '/'
+-//});
++$.cookie("__caselinkUser", "AuthUser=True&CustomerNumber=0000100&ContactId=9095",{
++    path: '/'
++});
+ 
+ window.App = Ember.Application.create({
+   LOG_TRANSITIONS: true,
+diff --git a/Webapp/ConsumerApp/css/main.css b/Webapp/ConsumerApp/css/main.css
+index b998638..d1c1e25 100644
+--- a/Webapp/ConsumerApp/css/main.css
++++ b/Webapp/ConsumerApp/css/main.css
+@@ -47,23 +47,23 @@ body {
+ }
+ 
+ .border-right {
+-  border-right: 1px solid #808080;
++  border-right: 1px solid gray;
+ }
+ 
+ .border-top {
+-  border-top: 1px solid #808080;
++  border-top: 1px solid gray;
+   margin-left: 0px !important;
+   margin-top: 5px;
+ }
+ 
+ .notice-panel {
+-  border-left: 1px solid #808080;
++  border-left: 1px solid gray;
+   margin-left: 0px !important;
+   padding-left: 10px;
+ }
+ 
+ .notices {
+-  border-bottom: 1px solid #808080;
++  border-bottom: 1px solid gray;
+   margin-left: 0px !important;
+   padding-top: 10px;
+ }
+@@ -73,7 +73,7 @@ body {
+ }
+ 
+ .transaction-header {
+-  border-bottom: 1px solid #808080;
++  border-bottom: 1px solid gray;
+ }
+ 
+ .member-item-selected .span2 {
+@@ -88,7 +88,7 @@ body {
+ }
+ 
+ .members-content {
+-  border: solid 2px #808080;
++  border: solid 2px gray;
+   border-radius: 10px;
+   padding: 15px;
+   margin: 15px;
+@@ -245,7 +245,7 @@ body {
+   border-radius: 0px;
+   -moz-border-radius: 0px;
+   -webkit-border-radius: 0px;
+-  border: 0px solid #000000;
++  border: 0px solid black;
+ }
+ 
+ .caselink-confirmation-popup-title {
+@@ -267,7 +267,7 @@ body {
+ }
+ 
+ .inactive-panel {
+-  background-color: #D3D3D3 !important;
++  background-color: lightgrey !important;
+ }
+ 
+ .wizard {
+@@ -316,7 +316,7 @@ body {
+   overflow-y: auto;
+   height: 300px;
+   display: none;
+-  border-top: 1px solid #EEE;
++  border-top: 1px solid #eeeeee;
+   margin-right: 5px;
+ }
+ 
+@@ -654,7 +654,7 @@ input[type=checkbox].wizard-checkbox:hover + label.wizard-checkbox-label {
+ }
+ 
+ .wizard-top-border-container {
+-  border-top: 1px solid #DDDDDD;
++  border-top: 1px solid #dddddd;
+   padding: 0px 20px 10px 20px;
+   margin-left: -30px;
+   margin-right: -30px;
+@@ -743,7 +743,7 @@ input[type=checkbox].wizard-checkbox:hover + label.wizard-checkbox-label {
+ .wizard-recip-container-summary {
+   font-size: 20px;
+   font-weight: 600;
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+   padding: 0px 0px 0px 0px;
+ }
+ 
+@@ -857,7 +857,7 @@ input[type=checkbox].wizard-checkbox:hover + label.wizard-checkbox-label {
+   background-repeat: no-repeat;
+   background-position: 98%;
+   background-color: #efefef;
+-  border: 1px solid #D3D3D3;
++  border: 1px solid lightgrey;
+   height: 30px;
+ }
+ .wizard-dropdown-container .dropdown-menu {
+@@ -1179,7 +1179,7 @@ table.dataTable tr.even td.sorting_1 {
+   -webkit-border-radius: 36px 36px 36px 36px;
+   background-color: #999999;
+   color: #FFFFFF;
+-  border: 0px solid #000000;
++  border: 0px solid black;
+   margin-left: 10px;
+   margin-top: 0 !important;
+   float: left;
+@@ -1187,7 +1187,7 @@ table.dataTable tr.even td.sorting_1 {
+ }
+ 
+ .case-list-item {
+-  background-color: #FFFFFF !important;
++  background-color: white !important;
+ }
+ 
+ .case-detail {
+@@ -2036,7 +2036,7 @@ table.dataTable tr.even td.sorting_1 {
+ .case-detail-docs-list .popover-content-right .popover-content {
+   width: 720px !important;
+   margin-top: -2px !important;
+-  background-color: #FFFFFF !important;
++  background-color: white !important;
+   border: solid 1px #dddddd !important;
+   border-radius: 0px 0px 10px 10px;
+   -moz-border-radius: 0px 0px 10px 10px;
+@@ -2153,7 +2153,7 @@ table.dataTable tr.even td.sorting_1 {
+ 
+ /** Transactions module styles */
+ .transaction-index {
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+   background-color: transparent;
+   height: 55px;
+ }
+@@ -2186,7 +2186,7 @@ table.dataTable tr.even td.sorting_1 {
+ }
+ 
+ .transaction-documents-body {
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+   margin: 10px;
+   background-color: #f8f8f8;
+ }
+@@ -2200,7 +2200,7 @@ table.dataTable tr.even td.sorting_1 {
+ }
+ 
+ .transaction-container {
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+   padding: 10px;
+ }
+ 
+@@ -2230,14 +2230,14 @@ table.dataTable tr.even td.sorting_1 {
+ }
+ 
+ .transaction-detail-border {
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+   margin-bottom: 10px;
+   height: 160px;
+   background-color: #FFFFFF;
+ }
+ 
+ .transaction-detail-border h5 {
+-  border-bottom: 1px solid #DDDDDD;
++  border-bottom: 1px solid #dddddd;
+   background-color: #efefef;
+   font-size: 26px;
+   padding-left: 10px;
+@@ -2352,7 +2352,7 @@ table.dataTable tr.even td.sorting_1 {
+   margin-bottom: 10px;
+   margin-top: -1px;
+   height: 160px;
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+   background-color: #FFFFFF;
+   border-radius: 0px 0px 5px 20px;
+   -moz-border-radius: 0px 0px 5px 5px;
+@@ -2361,7 +2361,7 @@ table.dataTable tr.even td.sorting_1 {
+ 
+ .transaction-detail-general-panel-container {
+   height: 50px;
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+   background-color: #333333;
+   border-radius: 5px 5px 0px 0px;
+   -moz-border-radius: 5px 5px 0px 0px;
+@@ -2403,7 +2403,7 @@ table.dataTable tr.even td.sorting_1 {
+   background-image: url("../img/029dropdown-caret-red.png");
+   background-repeat: no-repeat;
+   background-position: 210px 10px !important;
+-  background-color: #000000 !important;
++  background-color: black !important;
+   color: #efefef;
+ }
+ 
+@@ -2441,14 +2441,14 @@ table.dataTable tr.even td.sorting_1 {
+ }
+ 
+ .transaction-document-section {
+-  border-top: 1px solid #E5E5E5 !important;
+-  border-left: 1px solid #E5E5E5 !important;
+-  border-right: 1px solid #E5E5E5 !important;
++  border-top: 1px solid #e5e5e5 !important;
++  border-left: 1px solid #e5e5e5 !important;
++  border-right: 1px solid #e5e5e5 !important;
+ }
+ 
+ .transaction-accordion-inner-document-section {
+-  border-left: 1px solid #E5E5E5 !important;
+-  border-right: 1px solid #E5E5E5 !important;
++  border-left: 1px solid #e5e5e5 !important;
++  border-right: 1px solid #e5e5e5 !important;
+ }
+ 
+ .transaction-accordion-inner {
+@@ -3425,7 +3425,7 @@ body {
+ }
+ 
+ .dashboard-detail {
+-  border-top: 1px solid #DDDDDD;
++  border-top: 1px solid #dddddd;
+   margin-top: 50px;
+ }
+ 
+@@ -3440,7 +3440,7 @@ body {
+ }
+ 
+ .table {
+-  border-color: #DDDDDD !important;
++  border-color: #dddddd !important;
+ }
+ 
+ .dataTables_scroll {
+@@ -3454,8 +3454,8 @@ body {
+ }
+ 
+ .case-document-detail {
+-  border-bottom: 1px solid #DDDDDD;
+-  border-top: 1px solid #DDDDDD;
++  border-bottom: 1px solid #dddddd;
++  border-top: 1px solid #dddddd;
+   margin: 10px -35px 0px -35px;
+   padding: 10px 10px 10px 10px;
+ }
+@@ -3587,18 +3587,18 @@ body {
+   font-weight: 600;
+   margin-bottom: 5px;
+   margin-left: -30px;
+-  border-top: 1px solid #DDDDDD;
++  border-top: 1px solid #dddddd;
+   width: 960px;
+   padding: 0px 20px 0px 20px;
+ }
+ 
+ #selectRecipientsTable th {
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+ }
+ 
+ .wizard-upload-confirm-title {
+   font-size: 26px;
+-  border-bottom: 1px solid #DDDDDD;
++  border-bottom: 1px solid #dddddd;
+   padding-bottom: 10px;
+   margin-left: -25px;
+   margin-right: -35px;
+@@ -3648,7 +3648,7 @@ body {
+   height: 32px !important;
+   width: 250px;
+   padding-left: 40px !important;
+-  color: #FFFFFF !important;
++  color: white !important;
+   font-size: 20px !important;
+ }
+ 
+@@ -3759,7 +3759,7 @@ body {
+ 
+ .dashboard-header-menu {
+   height: 50px;
+-  border-bottom: 1px solid #DDDDDD;
++  border-bottom: 1px solid #dddddd;
+   padding-right: 10px;
+   margin: -25px -10px 10px -10px;
+ }
+@@ -3855,7 +3855,7 @@ body {
+   -moz-border-radius: 5px 5px 0px 0px;
+   -webkit-border-radius: 5px 5px 0px 0px;
+   height: 60px;
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+   background-color: #333333;
+   padding-top: 10px;
+ }
+@@ -3863,7 +3863,7 @@ body {
+ .case-detail-mode-border-container-rounded {
+   margin-top: -1px;
+   height: 160px;
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+   background-color: #f8f8f8;
+   border-radius: 0px 0px 5px 5px;
+   -moz-border-radius: 0px 0px 5px 5px;
+@@ -4007,7 +4007,7 @@ body {
+   font-size: 10px;
+   background: url("../img/notification-bullet.png") no-repeat 10px center;
+   padding-top: 5px !important;
+-  padding-bottom: 5px  !important;
++  padding-bottom: 5px !important;
+   padding-left: 30px !important;
+   padding-right: 10px !important;
+   border-bottom: 1px solid #999999;
+@@ -4016,7 +4016,7 @@ body {
+ 
+ .popover-content {
+   padding-top: 10px !important;
+-  padding-bottom: 0px  !important;
++  padding-bottom: 0px !important;
+   padding-left: 10px !important;
+   padding-right: 10px !important;
+   max-height: 600px;
+@@ -4436,7 +4436,7 @@ body {
+ 
+ #scrollDownBtn, #scrollUpBtn {
+   background: none repeat scroll 0 0 #484848;
+-  box-shadow: 8px 0 0 0 #D8D8D8;
++  box-shadow: 8px 0 0 0 #d8d8d8;
+   color: #FFFFFF;
+   cursor: pointer;
+   font-size: 16px;
+@@ -4455,9 +4455,9 @@ th:visited {
+   /* this gives the link block properties causing it to fill the whole LI containing it. Thistransaction-archieved causes the entire area to react to a mouse click. */
+   text-decoration: none;
+   color: #FFFFFF;
+-  -webkit-transition: all .3s ease;
+-  -moz-transition: all .2s ease;
+-  -o-transition: all .2s ease;
++  -webkit-transition: all 0.3s ease;
++  -moz-transition: all 0.2s ease;
++  -o-transition: all 0.2s ease;
+   padding: 0px 0px 0px 0px;
+ }
+ 
+@@ -4507,21 +4507,21 @@ tr.odd:hover {
+ 
+ tr.odd:hover td.sorting_1 {
+   background-color: #999999 !important;
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+ }
+ 
+ tr.odd:hover td.sorting_2 {
+   background-color: #999999 !important;
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+ }
+ 
+ tr.odd:hover td.sorting_3 {
+   background-color: #999999 !important;
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+ }
+ 
+ .dataTable td {
+-  border: 1px solid #DDDDDD;
++  border: 1px solid #dddddd;
+ }
+ 
+ .dataTables_scrollBody {
+@@ -4562,7 +4562,7 @@ tr.odd:hover td.sorting_3 {
+   font-size: 16px;
+   margin-top: 20px;
+   border-radius: 0px;
+-  border-bottom: 1px solid #DDDDDD;
++  border-bottom: 1px solid #dddddd;
+   text-align: left;
+   padding-left: 10px;
+   height: 50px;
+@@ -4647,7 +4647,7 @@ tr.odd:hover td.sorting_3 {
+ 
+ .div-DropDown-Sort {
+   background-color: #efefef;
+-  border: 1px solid #D3D3D3;
++  border: 1px solid lightgrey;
+   -webkit-box-shadow: inset 0px 2px 2px 0px rgba(0, 0, 0, 0.33);
+   -moz-box-shadow: inset 0px 2px 2px 0px rgba(0, 0, 0, 0.33);
+   box-shadow: inset 0px 2px 2px 0px rgba(0, 0, 0, 0.33);
+@@ -4657,7 +4657,7 @@ tr.odd:hover td.sorting_3 {
+ 
+ .div-DropDown-Sort:hover {
+   background-color: #333333;
+-  border: 1px solid #D3D3D3;
++  border: 1px solid lightgrey;
+   border-radius: 4px;
+   -webkit-box-shadow: inset 0px 3px 3px 0px rgba(0, 0, 0, 0.33);
+   -moz-box-shadow: inset 0px 3px 3px 0px rgba(0, 0, 0, 0.33);
+diff --git a/Webapp/ConsumerApp/js/build/controllers.js b/Webapp/ConsumerApp/js/build/controllers.js
+index f48059b..62debe1 100644
+--- a/Webapp/ConsumerApp/js/build/controllers.js
++++ b/Webapp/ConsumerApp/js/build/controllers.js
+@@ -1,4 +1,4 @@
+-/*! handlebarstemplates Generated on 2013-10-24 */
++/*! handlebarstemplates Generated on 2013-10-25 */
+ App.ApplicationController = Ember.ObjectController.extend({
+ 
+     userName:'',
+diff --git a/Webapp/ConsumerApp/js/build/models.js b/Webapp/ConsumerApp/js/build/models.js
+index 4280eb7..87a5e25 100644
+--- a/Webapp/ConsumerApp/js/build/models.js
++++ b/Webapp/ConsumerApp/js/build/models.js
+@@ -1,4 +1,4 @@
+-/*! handlebarstemplates Generated on 2013-10-24 */
++/*! handlebarstemplates Generated on 2013-10-25 */
+ App.ServeUploadRecipientModel = App.BaseModel.extend({
+ 
+     fields: [
+diff --git a/Webapp/ConsumerApp/js/build/routes.js b/Webapp/ConsumerApp/js/build/routes.js
+index b282d65..75f5fe8 100644
+--- a/Webapp/ConsumerApp/js/build/routes.js
++++ b/Webapp/ConsumerApp/js/build/routes.js
+@@ -1,4 +1,4 @@
+-/*! handlebarstemplates Generated on 2013-10-24 */
++/*! handlebarstemplates Generated on 2013-10-25 */
+ App.ApplicationRoute = Ember.Route.extend({
+ 
+     model: function(argParams) {
+diff --git a/Webapp/ConsumerApp/js/build/templates.js b/Webapp/ConsumerApp/js/build/templates.js
+index 0560a65..c964d2e 100644
+--- a/Webapp/ConsumerApp/js/build/templates.js
++++ b/Webapp/ConsumerApp/js/build/templates.js
+@@ -2023,6 +2023,39 @@ function program3(depth0,data) {
+   
+ });
+ 
++this["Ember"]["TEMPLATES"]["SimpleFilter"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
++this.compilerInfo = [4,'>= 1.0.0'];
++helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
++  var buffer = '', stack1, hashTypes, hashContexts, escapeExpression=this.escapeExpression, self=this;
++
++function program1(depth0,data) {
++  
++  var buffer = '', hashContexts, hashTypes;
++  data.buffer.push("\r\n            ");
++  hashContexts = {'labelBinding': depth0,'valueBinding': depth0};
++  hashTypes = {'labelBinding': "STRING",'valueBinding': "STRING"};
++  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.SelectOptionView", {hash:{
++    'labelBinding': ("tmpContent.documentCategory"),
++    'valueBinding': ("tmpContent.documentCategoryId")
++  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
++  data.buffer.push("\r\n        ");
++  return buffer;
++  }
++
++  data.buffer.push("<div class=\"btn-group\">\r\n    <button class=\"btn\">");
++  hashTypes = {};
++  hashContexts = {};
++  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "view.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
++  data.buffer.push("</button>\r\n    <button class=\"btn dropdown-toggle\" data-toggle=\"dropdown\">\r\n        <span class=\"caret\"></span>\r\n    </button>\r\n    <ul class=\"dropdown-menu\">\r\n        ");
++  hashTypes = {};
++  hashContexts = {};
++  stack1 = helpers.each.call(depth0, "tmpContent", "in", "view.content", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
++  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
++  data.buffer.push("\r\n    </ul>\r\n</div>");
++  return buffer;
++  
++});
++
+ this["Ember"]["TEMPLATES"]["caseParticipantsDataTable"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+ this.compilerInfo = [4,'>= 1.0.0'];
+ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+@@ -2324,39 +2357,6 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+   
+ });
+ 
+-this["Ember"]["TEMPLATES"]["simpleFilter"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+-this.compilerInfo = [4,'>= 1.0.0'];
+-helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+-  var buffer = '', stack1, hashTypes, hashContexts, escapeExpression=this.escapeExpression, self=this;
+-
+-function program1(depth0,data) {
+-  
+-  var buffer = '', hashContexts, hashTypes;
+-  data.buffer.push("\r\n            ");
+-  hashContexts = {'labelBinding': depth0,'valueBinding': depth0};
+-  hashTypes = {'labelBinding': "STRING",'valueBinding': "STRING"};
+-  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.SelectOptionView", {hash:{
+-    'labelBinding': ("tmpContent.documentCategory"),
+-    'valueBinding': ("tmpContent.documentCategoryId")
+-  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+-  data.buffer.push("\r\n        ");
+-  return buffer;
+-  }
+-
+-  data.buffer.push("<div class=\"btn-group\">\r\n    <button class=\"btn\">");
+-  hashTypes = {};
+-  hashContexts = {};
+-  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "view.label", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+-  data.buffer.push("</button>\r\n    <button class=\"btn dropdown-toggle\" data-toggle=\"dropdown\">\r\n        <span class=\"caret\"></span>\r\n    </button>\r\n    <ul class=\"dropdown-menu\">\r\n        ");
+-  hashTypes = {};
+-  hashContexts = {};
+-  stack1 = helpers.each.call(depth0, "tmpContent", "in", "view.content", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+-  data.buffer.push("\r\n    </ul>\r\n</div>");
+-  return buffer;
+-  
+-});
+-
+ this["Ember"]["TEMPLATES"]["transactionDataTable"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+ this.compilerInfo = [4,'>= 1.0.0'];
+ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+diff --git a/Webapp/ConsumerApp/js/build/views.js b/Webapp/ConsumerApp/js/build/views.js
+index d0ae8ec..6fd8776 100644
+--- a/Webapp/ConsumerApp/js/build/views.js
++++ b/Webapp/ConsumerApp/js/build/views.js
+@@ -1,4 +1,4 @@
+-/*! handlebarstemplates Generated on 2013-10-24 */
++/*! handlebarstemplates Generated on 2013-10-25 */
+ App.AccordionView = Ember.View.extend(JQ.Widget, {
+     title: this.title ? this.title : 'Untitled',
+     layoutName: 'accordion',
+diff --git a/Webapp/ConsumerApp/js/config/WebServices.js b/Webapp/ConsumerApp/js/config/WebServices.js
+index 93565c1..d4146b2 100644
+--- a/Webapp/ConsumerApp/js/config/WebServices.js
++++ b/Webapp/ConsumerApp/js/config/WebServices.js
+@@ -2,8 +2,8 @@ App.WebServices = {
+ 
+ //    BASE_URL: 'http://caselink.dev.awm/ws/'
+ //    BASE_URL: 'http://local-caselink.com/ws/'
+-//    BASE_URL: 'http://caselink.com/ws/'
+-    BASE_URL: 'http://dev-caselink.onelegal.com:8082/'
++    BASE_URL: 'http://caselink.com/ws/'
++//    BASE_URL: 'http://dev-caselink.onelegal.com:8082/'
+ }
+ 
+ _.extend(App.WebServices,{
+diff --git a/Webapp/ConsumerApp/js/config/app.js b/Webapp/ConsumerApp/js/config/app.js
+index 99e1c6a..1fbc276 100644
+--- a/Webapp/ConsumerApp/js/config/app.js
++++ b/Webapp/ConsumerApp/js/config/app.js
+@@ -1,7 +1,7 @@
+ //This should be remove when going to production as these cookies will be set by one legal website
+-//$.cookie("__caselinkUser", "AuthUser=True&CustomerNumber=0000100&ContactId=7622",{
+-//    path: '/'
+-//});
++$.cookie("__caselinkUser", "AuthUser=True&CustomerNumber=0000100&ContactId=9095",{
++    path: '/'
++});
+ 
+ window.App = Ember.Application.create({
+     LOG_TRANSITIONS: true,
